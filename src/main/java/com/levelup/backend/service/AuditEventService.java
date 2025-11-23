@@ -108,9 +108,9 @@ public class AuditEventService {
         if (actorOverride != null && !actorOverride.isBlank()) {
             return actorOverride.trim();
         }
-        return SecurityUtils.getCurrentRun()
-                .filter(run -> !run.isBlank())
-                .orElse(SYSTEM_ACTOR);
+        return SecurityUtils.getCurrentActorIdentity()
+            .filter(identity -> !identity.isBlank())
+            .orElse(SYSTEM_ACTOR);
     }
 
     private String serialize(Map<String, Object> metadata) {

@@ -1,6 +1,7 @@
 package com.levelup.backend.dto.user;
 
 import com.levelup.backend.dto.levelup.LevelUpReferidosDto;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class UserDto {
     private Integer nivel;
     private boolean activo;
     private LocalDateTime fechaRegistro;
+    private LocalDate fechaNacimiento;
     private List<String> roles;
     private LocalDateTime ultimoIngreso;
     private Integer puntosLevelUp;

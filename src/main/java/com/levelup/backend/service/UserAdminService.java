@@ -111,6 +111,7 @@ public class UserAdminService {
                 .nivel(determineLevel(stats))
                 .activo(usuario.isActive())
                 .fechaRegistro(usuario.getCreatedAt())
+                .fechaNacimiento(usuario.getFechaNacimiento())
                 .roles(roles)
                 .ultimoIngreso(null)
                 .puntosLevelUp(stats != null ? stats.getPoints() : 0)

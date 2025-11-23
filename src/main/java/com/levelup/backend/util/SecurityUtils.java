@@ -6,6 +6,7 @@ import com.levelup.backend.security.LevelUpUserDetails;
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 
 public final class SecurityUtils {
     private SecurityUtils() {
@@ -25,6 +26,23 @@ public final class SecurityUtils {
 
     public static Optional<String> getCurrentRun() {
         return getCurrentUserDetails().map(details -> details.getUser().getRun());
+    }
+
+    public static Optional<String> getCurrentActorIdentity() {
+        return getCurrentUserDetails()
+            .map(LevelUpUserDetails::getUser)
+            .map(user -> {
+                String run = user.getRun();
+                String email = user.getCorreo();
+                if (StringUtils.hasText(run) && StringUtils.hasText(email)) {
+                    return run + " (" + email + ")";
+                }
+                if (StringUtils.hasText(email)) {
+                    return email;
+                }
+                return run;
+            })
+            .filter(StringUtils::hasText);
     }
 
     public static boolean isCurrentUserAdmin() {
