@@ -1,5 +1,6 @@
 package com.levelup.backend.service;
 
+import com.levelup.backend.dto.levelup.PurchasePointsRequest;
 import com.levelup.backend.dto.order.CreateOrderRequest;
 import com.levelup.backend.dto.order.OrderDto;
 import com.levelup.backend.dto.order.OrderItemDto;
@@ -34,6 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UsuarioRepository usuarioRepository;
+    private final LevelUpStatsService levelUpStatsService;
 
     @Transactional(readOnly = true)
     public List<OrderDto> list(String userEmail, String status, String paymentMethod,
@@ -73,7 +75,7 @@ public class OrderService {
                 .userName(principal.getUser().getNombre())
                 .total(total)
                 .paymentMethod(parsePaymentMethod(request.getPaymentMethod()))
-                .status(OrderStatus.Pendiente)
+                .status(OrderStatus.Pagado)
                 .direccion(request.getDireccion().trim())
                 .region(trimToNull(request.getRegion()))
                 .comuna(trimToNull(request.getComuna()))
@@ -90,6 +92,10 @@ public class OrderService {
                 .collect(Collectors.toList());
         order.setItems(items);
         Order persisted = orderRepository.save(order);
+        levelUpStatsService.addPurchasePoints(PurchasePointsRequest.builder()
+            .run(usuario.getRun())
+            .totalCLP(total)
+            .build());
         return toDto(persisted);
     }
 
