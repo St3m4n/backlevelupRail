@@ -104,6 +104,7 @@ public class UserAddressService {
         if (!address.isPrimaryAddress()) {
             address.setPrimaryAddress(true);
             ensureSinglePrimary(address, usuario);
+            address = addressRepository.save(address);
         }
         return toDto(address);
     }
@@ -112,11 +113,15 @@ public class UserAddressService {
         if (!target.isPrimaryAddress()) {
             return;
         }
-        addressRepository.findByUsuario(usuario)
+        var modified = addressRepository.findByUsuario(usuario)
                 .stream()
                 .filter(address -> !address.getId().equals(target.getId()))
                 .filter(UserAddress::isPrimaryAddress)
-                .forEach(address -> address.setPrimaryAddress(false));
+                .peek(address -> address.setPrimaryAddress(false))
+                .toList();
+        if (!modified.isEmpty()) {
+            addressRepository.saveAll(modified);
+        }
     }
 
     private Usuario loadUsuarioAndAuthorize(String run) {
