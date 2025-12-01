@@ -22,6 +22,16 @@ public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
 
     @Transactional
+    public CategoriaDto create(String rawName) {
+        String normalized = normalizeName(rawName);
+        Categoria categoria = categoriaRepository.findByNombreIgnoreCase(normalized)
+                .map(this::reviveIfDeleted)
+                .orElseGet(() -> categoriaRepository.save(
+                        Categoria.builder().nombre(normalized).build()));
+        return toDto(categoria);
+    }
+
+    @Transactional
     public Categoria ensureCategory(String rawName) {
         String normalized = normalizeName(rawName);
         return categoriaRepository.findByNombreIgnoreCase(normalized)

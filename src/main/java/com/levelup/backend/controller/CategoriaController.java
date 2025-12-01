@@ -1,13 +1,16 @@
 package com.levelup.backend.controller;
 
 import com.levelup.backend.dto.producto.CategoriaDto;
+import com.levelup.backend.dto.producto.CreateCategoriaRequest;
 import com.levelup.backend.dto.producto.SyncCategoriasRequest;
 import com.levelup.backend.service.CategoriaService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,11 @@ public class CategoriaController {
     @GetMapping
     public ResponseEntity<List<CategoriaDto>> list(@RequestParam(defaultValue = "false") boolean includeDeleted) {
         return ResponseEntity.ok(categoriaService.list(includeDeleted));
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoriaDto> create(@Valid @RequestBody CreateCategoriaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.create(request.getNombre()));
     }
 
     @PutMapping
